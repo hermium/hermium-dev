@@ -33,10 +33,13 @@ type Block struct {
 	prev string
 }
 
+//Random genesis block hash, can use something more secure in prod
+const firstHash = "e4a2b512a2b5eed00ac7d2ec42b2ed53625ebe1d36d58fc0c795b0a2312af40f"
+
 func newChain() *Chain {
 	/* Generates a new Chain object with a genesis Block. */
 	c := new(Chain)
-	genesisBlock := Block{0, time.Now().Unix(), "First block", "", ""}
+	genesisBlock := Block{0, time.Now().Unix(), "genesis", firstHash, ""}
 	genesisBlock.hash = genesisBlock.getHash()
 	c.chain = append(c.chain, &genesisBlock)
 	c.length = 1
@@ -99,8 +102,20 @@ func (c Chain) push(b Block) *Chain {
 	return &c
 }
 
+func (c Chain) isValidChain() (bool,error) {
+	gen := c.chain[0]
+	if gen.data != "genesis" || gen.hash != firstHash {
+		return false, errors.New("Genesis block for Chain is invalid")
+	}
+	for i := 0; i < c.length; i++ {
+		if !(c.isValidBlock(c.chain[i])) {
+			return false, errors.New("One block in Chain is invalid")
+		}
+	}
+	return true, nil
+}
+
 /* TODOS:
-1) Write a func that checks if a Chain is valid
 2) We need to maintain a global Chain -- not sure how to do this in Go.
 3) Communicating the global Chain across {coordinator,client} nodes
 */
