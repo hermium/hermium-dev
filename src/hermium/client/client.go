@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "net"
 import "os"
+import "math/rand"
 import "strconv"
 import "time"
 
@@ -21,7 +22,8 @@ type ClientState struct {
 }
 
 func (c *ClientState) InitSettings() {
-    c.ListenPort = 1337
+    c.ListenPort = 1330 + uint32(rand.Intn(10))
+    fmt.Println("Set ListenPort to ", c.ListenPort)
 }
 
 func (c *ClientState) HandleConnection(conn net.Conn) {
@@ -50,10 +52,20 @@ func (c *ClientState) ListenForPeers() {
     }
 }
 
+func (c *ClientState) ConnectToPeer(address string) {
+    // TODO
+}
+
 func (c *ClientState) Run() {
+    rand.Seed(time.Now().UnixNano())
+
     c.InitSettings()
 
     go c.ListenForPeers()
+
+    if len(os.Args) > 1 {
+        c.ConnectToPeer(os.Args[1])
+    }
 
     for {
         time.Sleep(time.Second)
