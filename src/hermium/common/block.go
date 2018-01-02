@@ -25,10 +25,16 @@ type BlockHeader struct {
     Nonce         BlockNonce
 }
 
+type BlockEntry struct {
+    Address      Address
+    Transactions []Transaction
+}
+
 type BlockStubbedMerkle struct {
     StartPos    uint64
     EndPos      uint64
     NumLeaves   uint64
+    Entries     []BlockEntry      
     LeftHashes  MerkleHash
     RightHashes MerkleHash
 }
