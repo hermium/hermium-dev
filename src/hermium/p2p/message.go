@@ -19,7 +19,6 @@ const (
 )
 
 type UpdateInfoMessage struct {
-    Version      string
     StartAddress common.Address
     EndAddress   common.Address
 }
